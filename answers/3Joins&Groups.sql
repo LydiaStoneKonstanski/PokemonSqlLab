@@ -1,81 +1,12 @@
-Part 2: Simple Selects and Counts
-Directions: Write a sql query or sql queries that can answer the following questions
+'''Part 3: Joins and Groups
 
-
-
-
-
-What are all the types of pokemon that a pokemon can have?
-mysql> SELECT name FROM types;
-+----------+
-| name     |
-+----------+
-| Normal   |
-| Water    |
-| Grass    |
-| Rock     |
-| Fire     |
-| Ground   |
-| Poison   |
-| Bug      |
-| Electric |
-| Dragon   |
-| Steel    |
-| Dark     |
-| Fighting |
-| Psychic  |
-| Ghost    |
-| Fairy    |
-| Ice      |
-| Flying   |
-+----------+
-18 rows in set (0.00 sec)
-
-
-What is the name of the pokemon with id 45?
-mysql> SELECT name FROM pokemons WHERE id = 45;
-+-------+
-| name  |
-+-------+
-| Eevee |
-+-------+
-1 row in set (0.00 sec)
-
-
-How many pokemon are there?
-mysql> SELECT COUNT(name) FROM pokemons;
-+-------------+
-| COUNT(name) |
-+-------------+
-|         656 |
-+-------------+
-1 row in set (0.00 sec)
-
-
-How many types are there?
-mysql> SELECT COUNT(id) FROM types;
-+-----------+
-| COUNT(id) |
-+-----------+
-|        18 |
-+-----------+
-1 row in set (0.01 sec)
-
-
-How many pokemon have a secondary type?
-mysql> SELECT COUNT(id) FROM pokemons WHERE secondary_type IS NOT NULL;
-+-----------+
-| COUNT(id) |
-+-----------+
-|       316 |
-+-----------+
-1 row in set (0.00 sec)
-
-
-Part 3: Joins and Groups
-
-What is each pokemon's primary type?
-mysql> SELECT  pokemons.name,  types.name FROM pokemons LEFT JOIN types ON primary_type = types.id;
+'''What is each pokemon's primary type?
+mysql> SELECT
+p.name,
+t.name
+FROM pokemons p
+LEFT JOIN types t
+ON p.primary_type = t.id;
 +-------------+----------+
 | name        | name     |
 +-------------+----------+
@@ -739,8 +670,15 @@ mysql> SELECT  pokemons.name,  types.name FROM pokemons LEFT JOIN types ON prima
 656 rows in set (0.01 sec)
 
 
-What is Rufflet's secondary type?
-mysql> SELECT pokemons.name, secondary_type, types.name FROM pokemons JOIN types ON  pokemons.secondary_type = types.id WHERE pokemons.name = "Rufflet";
+'''What is Rufflet's secondary type?
+mysql> SELECT
+pokemons.name,
+secondary_type,
+types.name
+FROM pokemons
+JOIN types
+ON  pokemons.secondary_type = types.id
+WHERE pokemons.name = "Rufflet";
 +---------+----------------+--------+
 | name    | secondary_type | name   |
 +---------+----------------+--------+
@@ -750,8 +688,12 @@ mysql> SELECT pokemons.name, secondary_type, types.name FROM pokemons JOIN types
 
 
 
-What are the names of the pokemon that belong to the trainer with trainerID 303?
-mysql> SELECT pokemons.name FROM pokemons JOIN pokemon_trainer ON pokemons.id = pokemon_trainer.pokemon_id WHERE pokemon_trainer.trainerID = 303;
+'''What are the names of the pokemon that belong to the trainer with trainerID 303?
+mysql> SELECT p.name
+FROM pokemons p
+JOIN pokemon_trainer pt
+ON p.id = pt.pokemon_id
+WHERE pt.trainerID = 303;
 +-----------+
 | name      |
 +-----------+
@@ -761,8 +703,12 @@ mysql> SELECT pokemons.name FROM pokemons JOIN pokemon_trainer ON pokemons.id = 
 2 rows in set (0.02 sec)
 
 
-How many pokemon have a secondary type Poison?
-mysql> SELECT COUNT(pokemons.id) FROM types JOIN pokemons ON secondary_type = types.id WHERE types.name = "Poison";
+'''How many pokemon have a secondary type Poison?
+mysql> SELECT COUNT(pokemons.id)
+FROM types
+JOIN pokemons
+ON secondary_type = types.id
+WHERE types.name = "Poison";
 +--------------------+
 | COUNT(pokemons.id) |
 +--------------------+
@@ -771,6 +717,256 @@ mysql> SELECT COUNT(pokemons.id) FROM types JOIN pokemons ON secondary_type = ty
 1 row in set (0.00 sec)
 
 
-What are all the primary types and how many pokemon have that type?
-How many pokemon at level 100 does each trainer with at least one level 100 pokemone have? (Hint: your query should not display a trainer
-How many pokemon only belong to one trainer and no other?
+'''What are all the primary types and how many pokemon have that type?
+mysql> SELECT types.name,
+COUNT(*) AS COUNT
+FROM types
+JOIN pokemons
+ON types.id = primary_type
+GROUP BY types.name;
++----------+-------+
+| name     | COUNT |
++----------+-------+
+| Normal   |    90 |
+| Water    |    95 |
+| Grass    |    59 |
+| Rock     |    38 |
+| Fire     |    38 |
+| Ground   |    29 |
+| Poison   |    27 |
+| Bug      |    61 |
+| Electric |    35 |
+| Dragon   |    22 |
+| Steel    |    19 |
+| Dark     |    24 |
+| Fighting |    25 |
+| Psychic  |    38 |
+| Ghost    |    19 |
+| Fairy    |    14 |
+| Ice      |    22 |
+| Flying   |     1 |
++----------+-------+
+18 rows in set (0.01 sec)
+
+
+'''How many pokemon at level 100 does each trainer with at least one level 100 pokemon have?
+'''(Hint: your query should not display a trainer.)
+mysql> SELECT trainerID,
+COUNT(pokemon_id)
+AS COUNT FROM pokemon_trainer
+WHERE pokelevel = 100
+GROUP BY trainerID;
++-----------+-------+
+| trainerID | COUNT |
++-----------+-------+
+|      1258 |     6 |
+|      1259 |     6 |
+|      1260 |     6 |
+|      1261 |     6 |
+|      1262 |     6 |
+|      1263 |     6 |
+|      1264 |     6 |
+|      1265 |     6 |
+|      1266 |     6 |
+|      1267 |     6 |
+|      1268 |     6 |
+|      1269 |     6 |
+|      1270 |     6 |
+|      1271 |     6 |
+|      1272 |     6 |
+|      1273 |     6 |
+|      1280 |     6 |
+|      1281 |     5 |
+|      1284 |     6 |
+|      1285 |     6 |
+|      1312 |     6 |
+|      1317 |     6 |
+|      1320 |     6 |
+|      1325 |     6 |
+|      1335 |     1 |
+|      1351 |     2 |
+|      1567 |     6 |
+|      1728 |     6 |
+|      2250 |     6 |
+|      2251 |     6 |
+|      2252 |     5 |
+|      2253 |     5 |
+|      2254 |     6 |
+|      2255 |     6 |
+|      2256 |     6 |
+|      2257 |     6 |
+|      2258 |     6 |
+|      2259 |     6 |
+|      2458 |     6 |
+|      2459 |     5 |
+|      2460 |     6 |
+|      2461 |     6 |
+|      2462 |     6 |
+|      2463 |     6 |
+|      2464 |     6 |
+|      2465 |     6 |
+|      2470 |     6 |
+|      2471 |     6 |
+|      2542 |     2 |
+|      2550 |     2 |
+|      2783 |     1 |
+|      3043 |     6 |
+|      3045 |     6 |
+|      3080 |     2 |
+|      3420 |     1 |
+|      3421 |     1 |
+|      4084 |     6 |
+|      4085 |     6 |
+|      4086 |     6 |
+|      4087 |     6 |
+|      4088 |     6 |
+|      4089 |     6 |
+|      4090 |     6 |
+|      4091 |     6 |
+|      4092 |     6 |
+|      4093 |     6 |
+|      4094 |     6 |
+|      4095 |     6 |
+|      4096 |     6 |
+|      4097 |     6 |
+|      4098 |     6 |
+|      4099 |     6 |
+|      4106 |     6 |
+|      4107 |     5 |
+|      4110 |     6 |
+|      4111 |     6 |
+|      4138 |     6 |
+|      4143 |     6 |
+|      4146 |     6 |
+|      4151 |     6 |
+|      4161 |     1 |
+|      4177 |     2 |
+|      4393 |     6 |
+|      4554 |     6 |
+|      5076 |     6 |
+|      5077 |     6 |
+|      5078 |     5 |
+|      5079 |     5 |
+|      5080 |     6 |
+|      5081 |     6 |
+|      5082 |     6 |
+|      5083 |     6 |
+|      5084 |     6 |
+|      5085 |     6 |
+|      5284 |     6 |
+|      5285 |     5 |
+|      5286 |     6 |
+|      5287 |     6 |
+|      5288 |     6 |
+|      5289 |     6 |
+|      5290 |     6 |
+|      5291 |     6 |
+|      5296 |     6 |
+|      5297 |     6 |
+|      5368 |     2 |
+|      5376 |     2 |
+|      5609 |     1 |
+|      5869 |     6 |
+|      5871 |     6 |
+|      5906 |     2 |
+|      6246 |     1 |
+|      6247 |     1 |
+|      6805 |     6 |
+|      6806 |     6 |
+|      7365 |     6 |
+|      7374 |     6 |
+|      7565 |     1 |
+|      7706 |     1 |
+|      7827 |     6 |
+|      7828 |     6 |
+|      8043 |     6 |
+|      8044 |     6 |
+|      8053 |     2 |
+|      8280 |     5 |
+|      8281 |     5 |
+|      8282 |     6 |
+|      8283 |     6 |
+|      8284 |     6 |
+|      8285 |     6 |
+|      8286 |     6 |
+|      8287 |     6 |
+|      8391 |     1 |
+|      8751 |     1 |
+|      8752 |     1 |
+|      8762 |     1 |
+|      8763 |     1 |
+|      9253 |     6 |
+|      9261 |     6 |
+|      9320 |     6 |
+|      9323 |     6 |
+|      9324 |     6 |
+|      9343 |     2 |
+|      9449 |     1 |
+|      9472 |     6 |
+|      9473 |     6 |
+|      9474 |     6 |
+|      9475 |     6 |
+|      9476 |     5 |
+|      9477 |     6 |
+|      9478 |     6 |
+|      9479 |     6 |
+|      9558 |     2 |
+|      9559 |     1 |
+|      9625 |     2 |
+|      9820 |     1 |
+|      9888 |     6 |
+|      9889 |     6 |
+|      9890 |     6 |
+|      9891 |     6 |
+|      9892 |     6 |
+|      9893 |     6 |
+|      9894 |     6 |
+|      9895 |     6 |
+|      9898 |     6 |
+|      9899 |     6 |
+|      9932 |     2 |
+|     10077 |     1 |
+|     10114 |     2 |
+|     10115 |     2 |
+|     10165 |     5 |
+|     10166 |     6 |
+|     10321 |     2 |
+|     10343 |     6 |
+|     10345 |     6 |
+|     10347 |     6 |
+|     10348 |     6 |
+|     10349 |     6 |
+|     10351 |     6 |
+|     10352 |     6 |
+|     10354 |     6 |
+|     10355 |     6 |
+|     10356 |     6 |
+|     10357 |     6 |
+|     10358 |     6 |
+|     10535 |     2 |
+|     10567 |     1 |
+|     10854 |     6 |
+|     10856 |     6 |
+|     11248 |     1 |
+|     11317 |     2 |
+|     11557 |     6 |
+|     11569 |     2 |
+|     11602 |     2 |
+|     11696 |     2 |
++-----------+-------+
+194 rows in set (0.02 sec)
+
+
+'''How many pokemon only belong to one trainer and no other?
+mysql> SELECT COUNT(*)
+FROM (SELECT pokemon_id,
+COUNT(*) AS COUNT FROM pokemon_trainer
+GROUP BY pokemon_id
+HAVING COUNT(*) = 1)
+AS T;
++----------+
+| COUNT(*) |
++----------+
+|       13 |
++----------+
+1 row in set (0.02 sec)

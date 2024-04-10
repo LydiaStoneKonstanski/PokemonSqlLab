@@ -1,0 +1,70 @@
+'''Part 2: Simple Selects and Counts
+'''Directions: Write a sql query or sql queries that can answer the following questions:'''
+
+
+'''What are all the types of pokemon that a pokemon trainer can have?
+
+mysql> SELECT name FROM types;
++----------+
+| name     |
++----------+
+| Normal   |
+| Water    |
+| Grass    |
+| Rock     |
+| Fire     |
+| Ground   |
+| Poison   |
+| Bug      |
+| Electric |
+| Dragon   |
+| Steel    |
+| Dark     |
+| Fighting |
+| Psychic  |
+| Ghost    |
+| Fairy    |
+| Ice      |
+| Flying   |
++----------+
+18 rows in set (0.00 sec)
+
+
+'''What is the name of the pokemon with id 45?
+mysql> SELECT name FROM pokemons WHERE id = 45;
++-------+
+| name  |
++-------+
+| Eevee |
++-------+
+1 row in set (0.00 sec)
+
+
+'''How many pokemon are there?
+mysql> SELECT COUNT(name) FROM pokemons;
++-------------+
+| COUNT(name) |
++-------------+
+|         656 |
++-------------+
+1 row in set (0.00 sec)
+
+
+'''How many types are there?
+mysql> SELECT COUNT(id) FROM types;
++-----------+
+| COUNT(id) |
++-----------+
+|        18 |
++-----------+
+1 row in set (0.01 sec)
+
+
+'''How many pokemon have a secondary type?
+mysql> SELECT COUNT(id) FROM pokemons WHERE secondary_type IS NOT NULL;
++-----------+
+| COUNT(id) |
++-----------+
+|       316 |
++-----------+
+1 row in set (0.00 sec)
